@@ -3,9 +3,9 @@ FROM mcr.microsoft.com/oss/go/microsoft/golang:1.19 as targetallocator-builder
 WORKDIR /app
 # Copy go mod and sum files
 COPY ./opentelemetry-operator/cmd/otel-allocator/go.mod ./opentelemetry-operator/cmd/otel-allocator/go.sum ./opentelemetry-operator/cmd/otel-allocator/
+WORKDIR /app/opentelemetry-operator/cmd/otel-allocator/
 RUN go mod download
 COPY ./opentelemetry-operator/cmd/otel-allocator ./opentelemetry-operator/cmd/otel-allocator/
-WORKDIR /app/opentelemetry-operator/cmd/otel-allocator/
 # Build the Go app
 # RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 RUN if [ "$TARGETARCH" = "arm64" ] ; then CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -buildmode=pie -ldflags '-linkmode external -extldflags=-Wl,-z,now' -o targetallocator . ; else CGO_ENABLED=1 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -buildmode=pie -ldflags '-linkmode external -extldflags=-Wl,-z,now' -o targetallocator . ; fi
