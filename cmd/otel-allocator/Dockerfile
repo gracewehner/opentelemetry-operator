@@ -2,9 +2,9 @@
 FROM mcr.microsoft.com/oss/go/microsoft/golang:1.19 as targetallocator-builder
 WORKDIR /app
 # Copy go mod and sum files
-COPY go.mod go.sum ./
+COPY ./opentelemetry-operator/cmd/otel-allocator/go.mod ./opentelemetry-operator/cmd/otel-allocator/go.sum ./
 RUN go mod download
-COPY . .
+COPY ./opentelemetry-operator/cmd/otel-allocator .
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
@@ -13,10 +13,10 @@ LABEL description="Azure Monitor Prometheus metrics collector - target allocator
 LABEL maintainer="ciprometheus@microsoft.com"
 ENV OS_TYPE "linux"
 ENV tmpdir /opt
-COPY ../../../scripts/livenessprobe-targetallocator.sh $tmpdir/microsoft/liveness/livenessprobe-targetallocator.sh
-COPY ../../../scripts/setup-targetallocator.sh ../../../scripts/main-targetallocator.sh $tmpdir/
-COPY ../../../LICENSE $tmpdir/microsoft
-COPY ../../../NOTICE $tmpdir/microsoft
+COPY ./scripts/livenessprobe-targetallocator.sh $tmpdir/microsoft/liveness/livenessprobe-targetallocator.sh
+COPY ./scripts/setup-targetallocator.sh ./scripts/main-targetallocator.sh $tmpdir/
+COPY ./LICENSE $tmpdir/microsoft
+COPY ./NOTICE $tmpdir/microsoft
 RUN tdnf clean all
 RUN tdnf repolist --refresh
 RUN tdnf update -y
