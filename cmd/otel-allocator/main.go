@@ -103,7 +103,6 @@ func main() {
 	defer close(interrupts)
 
 	if *cliConf.PromCRWatcherConf.Enabled {
-		setupLog.Info("cr watcher enabled, working as expected")
 		promWatcher, err = allocatorWatcher.NewPrometheusCRWatcher(cfg, cliConf)
 		if err != nil {
 			setupLog.Error(err, "Can't start the prometheus watcher")
@@ -122,8 +121,6 @@ func main() {
 					setupLog.Error(promWatcherErr, "prometheus watcher failed to close")
 				}
 			})
-	} else {
-		setupLog.Info("didnt take in the cr watcher argument")
 	}
 	runGroup.Add(
 		func() error {
