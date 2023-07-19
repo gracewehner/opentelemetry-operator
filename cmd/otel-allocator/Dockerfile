@@ -9,6 +9,7 @@ COPY ./opentelemetry-operator/cmd/otel-allocator /app/opentelemetry-operator/cmd
 # Build the Go app
 # RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 RUN if [ "$TARGETARCH" = "arm64" ] ; then CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -buildmode=pie -ldflags '-linkmode external -extldflags=-Wl,-z,now' -o targetallocator . ; else CGO_ENABLED=1 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -buildmode=pie -ldflags '-linkmode external -extldflags=-Wl,-z,now' -o targetallocator . ; fi
+COPY ./targetallocator /targetallocator
 
 FROM mcr.microsoft.com/cbl-mariner/base/core:2.0 as builder
 LABEL description="Azure Monitor Prometheus metrics collector - target allocator"
@@ -40,9 +41,9 @@ COPY --from=builder /busybin /busybin
 COPY --from=builder /usr/bin/inotifywait /usr/bin/inotifywait
 COPY --from=builder /usr/bin/bash /usr/bin/bash
 COPY --from=builder /usr/sbin/busybox /usr/sbin/busybox
-COPY --from=builder /usr/bin/vim /usr/bin/vim
+# COPY --from=builder /usr/bin/vim /usr/bin/vim
 # COPY --from=builder /usr/share/vim /usr/share/vim
-COPY --from=builder /usr/bin/gzip /usr/bin/
+# COPY --from=builder /usr/bin/gzip /usr/bin/
 # COPY --from=builder /usr/bin/curl /usr/bin/
 COPY --from=builder /bin/sh /bin/sh
 
@@ -65,7 +66,7 @@ COPY --from=builder /lib/libreadline.so.8 /lib/libc.so.6 /usr/lib/libncursesw.so
 #WORKDIR /root/
 
 # Copy the pre-built binary file from the previous stage
-COPY --from=targetallocator-builder /app/opentelemetry-operator/cmd/otel-allocator/targetallocator $tmpdir/
+COPY --from=targetallocator-builder /targetallocator $tmpdir/
 
 # ENTRYPOINT ["./main"]
 ENTRYPOINT [ "/bin/bash" ]
