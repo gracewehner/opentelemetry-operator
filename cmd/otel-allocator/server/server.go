@@ -120,7 +120,7 @@ func (s *Server) UpdateScrapeConfigResponse(configs map[string]*promconfig.Scrap
 		return err
 	}
 	s.logger.Info("Updated config\n")
-	s.logger.Info(jsonConfig)
+	s.logger.Info(string(configBytes))
 	s.mtx.Lock()
 	s.scrapeConfigResponse = jsonConfig
 	s.mtx.Unlock()
