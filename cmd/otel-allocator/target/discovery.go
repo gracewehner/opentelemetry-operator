@@ -23,6 +23,7 @@ import (
 	"github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/model/relabel"
+	"gopkg.in/yaml.v2"
 
 	allocatorWatcher "github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator/watcher"
 )
@@ -75,6 +76,9 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 			jobToScrapeConfig[scrapeConfig.JobName] = scrapeConfig
 			discoveryCfg[scrapeConfig.JobName] = scrapeConfig.ServiceDiscoveryConfigs
 			relabelCfg[scrapeConfig.JobName] = scrapeConfig.RelabelConfigs
+			targetAllocatorConfigYaml, _ := yaml.Marshal(jobToScrapeConfig)
+			m.log.Info("in discover - \n")
+			m.log.Info(string(targetAllocatorConfigYaml))
 		}
 	}
 
