@@ -93,7 +93,7 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 
 		m.scrapeConfigsHash = hash
 	} else if m.scrapeConfigsHash == hash {
-		m.log.Info("Hash is different")
+		m.log.Info("Hash is same")
 	}
 
 	if m.hook != nil {

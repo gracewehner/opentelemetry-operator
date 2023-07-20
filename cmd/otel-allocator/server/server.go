@@ -108,6 +108,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 // configurations such that the underlying prometheus marshaling is used. After that, the YAML is converted
 // in to a JSON format for consumers to use.
 func (s *Server) UpdateScrapeConfigResponse(configs map[string]*promconfig.ScrapeConfig) error {
+	s.logger.Info("Updating scrape config response...")
 	var configBytes []byte
 	configBytes, err := yaml.Marshal(configs)
 	if err != nil {
@@ -118,6 +119,8 @@ func (s *Server) UpdateScrapeConfigResponse(configs map[string]*promconfig.Scrap
 	if err != nil {
 		return err
 	}
+	s.logger.Info("Updated config\n")
+	s.logger.Info(jsonConfig)
 	s.mtx.Lock()
 	s.scrapeConfigResponse = jsonConfig
 	s.mtx.Unlock()
