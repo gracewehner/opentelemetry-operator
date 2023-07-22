@@ -15,8 +15,8 @@
 package target
 
 import (
+	"github.com/cnf/structhash"
 	"github.com/go-logr/logr"
-	"github.com/mitchellh/hashstructure"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/common/model"
@@ -82,7 +82,8 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 		}
 	}
 
-	hash, err := hashstructure.Hash(jobToScrapeConfig, nil)
+	// hash, err := hashstructure.Hash(jobToScrapeConfig, nil)
+	hash, err := structhash.Hash(scrapeConfigsResponse, 1)
 	if err != nil {
 		return err
 	}
