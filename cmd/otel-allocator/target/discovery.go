@@ -83,19 +83,22 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 	}
 
 	// hash, err := hashstructure.Hash(jobToScrapeConfig, nil)
-	hash, err := structhash.Hash(scrapeConfigsResponse, 1)
+	hash, err := structhash.Hash(jobToScrapeConfig, 1)
 	if err != nil {
 		return err
 	}
 	// If the hash has changed, updated stored hash and send the new config.
 	// Otherwise skip updating scrape configs.
 	if m.scrapeConfigsUpdater != nil && m.scrapeConfigsHash != hash {
+		m.log.Info("hash is diff")
 		err := m.scrapeConfigsUpdater.UpdateScrapeConfigResponse(jobToScrapeConfig)
 		if err != nil {
 			return err
 		}
 
 		m.scrapeConfigsHash = hash
+	} else if m.scrapeConfigsHash == hash {
+		m.log.Info("hash is same")
 	}
 
 	if m.hook != nil {
