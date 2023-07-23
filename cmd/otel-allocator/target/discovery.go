@@ -40,7 +40,7 @@ type Discoverer struct {
 	close                chan struct{}
 	configsMap           map[allocatorWatcher.EventSource]*config.Config
 	hook                 discoveryHook
-	scrapeConfigsHash    uint64
+	scrapeConfigsHash    string
 	scrapeConfigsUpdater scrapeConfigsUpdater
 }
 
