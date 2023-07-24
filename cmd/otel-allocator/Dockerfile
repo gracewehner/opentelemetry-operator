@@ -17,8 +17,9 @@ RUN if [ "$TARGETARCH" = "arm64" ] ; then CC=aarch64-linux-gnu-gcc CGO_ENABLED=1
 # RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 ######## Start a new stage from scratch #######
-FROM mcr.microsoft.com/cbl-mariner/distroless/debug:2.0
-
+#FROM mcr.microsoft.com/cbl-mariner/distroless/debug:2.0
+FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
+RUN tdnf install -y ca-certificates wget vim curl
 WORKDIR /root/
 
 # Copy the pre-built binary file from the previous stage
