@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
+COPY targetallocator.yaml /conf/targetallocator.yaml
 
 RUN go mod download
 
@@ -23,7 +24,7 @@ WORKDIR /root/
 # Copy the pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 
-# Creating this file so that the configuration reader can update this file
-COPY targetallocator.yaml /conf/targetallocator.yaml
+# Copying targetallocator.yaml file since there is no configmap
+COPY --from=builder /conf/targetallocator.yaml /conf/targetallocator.yaml
 
 ENTRYPOINT ["./main"]
