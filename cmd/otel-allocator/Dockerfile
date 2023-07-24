@@ -24,6 +24,6 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # Creating this file so that the configuration reader can update this file
-RUN touch /conf/targetallocator.yaml
+COPY targetallocator.yaml /conf/targetallocator.yaml
 
 ENTRYPOINT ["./main"]
