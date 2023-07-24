@@ -23,4 +23,7 @@ WORKDIR /root/
 # Copy the pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 
+# Creating this file so that the configuration reader can update this file
+RUN touch /conf/targetallocator.yaml
+
 ENTRYPOINT ["./main"]
