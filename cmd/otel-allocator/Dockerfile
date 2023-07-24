@@ -10,8 +10,10 @@ RUN go mod download
 
 COPY . .
 
+ARG TARGETOS TARGETARCH
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN if [ "$TARGETARCH" = "arm64" ] ; then CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -installsuffix -buildmode=pie -ldflags '-linkmode external -extldflags=-Wl,-z,now' -o main . ; else CGO_ENABLED=1 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -installsuffix -buildmode=pie -ldflags '-linkmode external -extldflags=-Wl,-z,now' -o main . ; fi
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 ######## Start a new stage from scratch #######
 FROM mcr.microsoft.com/cbl-mariner/distroless/debug:2.0
