@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
-COPY targetallocator.yaml /conf/targetallocator.yaml
+COPY targetallocator.yaml ./
 
 RUN go mod download
 
@@ -27,6 +27,6 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # Copying targetallocator.yaml file since there is no configmap
-COPY --from=builder /conf/targetallocator.yaml /conf/targetallocator.yaml
+COPY --from=builder /app/targetallocator.yaml /conf/
 
 ENTRYPOINT ["./main"]
