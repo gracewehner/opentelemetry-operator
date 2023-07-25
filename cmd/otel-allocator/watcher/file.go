@@ -70,6 +70,7 @@ func (f *FileWatcher) Watch(upstreamEvents chan Event, upstreamErrors chan error
 			return nil
 		case fileEvent := <-f.watcher.Events:
 			if fileEvent.Op == fsnotify.Create {
+				f.logger.Info("File change detected")
 				upstreamEvents <- Event{
 					Source:  EventSourceConfigMap,
 					Watcher: Watcher(f),
