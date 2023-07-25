@@ -27,6 +27,6 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # Copying targetallocator.yaml file since there is no configmap
-COPY --from=builder /app .
+COPY --from=builder /app/targetallocator.yaml /conf
 
 ENTRYPOINT ["./main"]
