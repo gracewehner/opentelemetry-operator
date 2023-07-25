@@ -5,7 +5,6 @@ WORKDIR /app
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
-COPY targetallocator.yaml ./
 
 RUN go mod download
 
@@ -17,16 +16,13 @@ RUN if [ "$TARGETARCH" = "arm64" ] ; then CC=aarch64-linux-gnu-gcc CGO_ENABLED=1
 # RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 ######## Start a new stage from scratch #######
-#FROM mcr.microsoft.com/cbl-mariner/distroless/debug:2.0
-FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
-RUN tdnf install -y ca-certificates wget vim curl busybox
-RUN mkdir /busybin && busybox --install /busybin
+FROM mcr.microsoft.com/cbl-mariner/distroless/debug:2.0
+#FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
+#RUN tdnf install -y ca-certificates wget vim curl busybox
+#RUN mkdir /busybin && busybox --install /busybin
 WORKDIR /root/
 
 # Copy the pre-built binary file from the previous stage
 COPY --from=builder /app/main .
-
-# Copying targetallocator.yaml file since there is no configmap
-COPY --from=builder /app/targetallocator.yaml /conf
 
 ENTRYPOINT ["./main"]

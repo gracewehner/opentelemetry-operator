@@ -63,14 +63,14 @@ func (f *FileWatcher) Watch(upstreamEvents chan Event, upstreamErrors chan error
 	if err != nil {
 		return err
 	}
-
+	// https://github.com/fsnotify/fsnotify/blob/9342b6df577910c6eac718dc62845d8c95f8548b/fsnotify.go#L30
 	for {
 		select {
 		case <-f.closer:
 			return nil
 		case fileEvent := <-f.watcher.Events:
-			if fileEvent.Op == fsnotify.Create {
-				f.logger.Info("File change detected")
+			if fileEvent.Op.Has(fsnotify.Create) || fileEvent.Op.Has(fsnotify.Write) {
+				f.logger.Info("File change detected", "event", fileEvent.Op.String())
 				upstreamEvents <- Event{
 					Source:  EventSourceConfigMap,
 					Watcher: Watcher(f),
