@@ -19,7 +19,8 @@ RUN if [ "$TARGETARCH" = "arm64" ] ; then CC=aarch64-linux-gnu-gcc CGO_ENABLED=1
 ######## Start a new stage from scratch #######
 #FROM mcr.microsoft.com/cbl-mariner/distroless/debug:2.0
 FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
-RUN tdnf install -y ca-certificates wget vim curl
+RUN tdnf install -y ca-certificates wget vim curl busybox
+RUN mkdir /busybin && busybox --install /busybin
 WORKDIR /root/
 
 # Copy the pre-built binary file from the previous stage
