@@ -78,8 +78,18 @@ type CLIConfig struct {
 
 func Load(file string) (Config, error) {
 	var cfg Config
+
 	if err := unmarshal(&cfg, file); err != nil {
-		return Config{}, err
+		// returning Config with default labels since file is not present at startup
+		allocationStrategy := "consistent-hashing"
+		targetAllocatorConfig := Config{
+			AllocationStrategy: &allocationStrategy,
+			LabelSelector: map[string]string{
+				"ama-metrics.component":          "ama-metrics-targetallocator",
+				"ama-metrics.component/instance": "ama-metrics-targetallocator-ta-container",
+			},
+		}
+		return targetAllocatorConfig, err
 	}
 	return cfg, nil
 }
