@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"strings"
 
 	gokitlog "github.com/go-kit/log"
 	"github.com/oklog/run"
