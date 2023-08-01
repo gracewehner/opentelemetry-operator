@@ -90,15 +90,13 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 	// If the hash has changed, updated stored hash and send the new config.
 	// Otherwise skip updating scrape configs.
 	if m.scrapeConfigsUpdater != nil && m.scrapeConfigsHash != hash {
-		m.log.Info("hash is diff")
+		m.log.Info("ScrapeConfig hash is different, updating new scrapeconfig detected for ", "source", source.String())
 		err := m.scrapeConfigsUpdater.UpdateScrapeConfigResponse(jobToScrapeConfig)
 		if err != nil {
 			return err
 		}
 
 		m.scrapeConfigsHash = hash
-	} else if m.scrapeConfigsHash == hash {
-		m.log.Info("hash is same")
 	}
 
 	if m.hook != nil {

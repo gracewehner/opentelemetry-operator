@@ -1,6 +1,0 @@
-allocation_strategy: consistent-hashing
-config:
-  scrape_configs:
-label_selector:
-  app.kubernetes.io/component: opentelemetry-collector
-  app.kubernetes.io/instance: kube-system.ama-metrics-otelcollector
