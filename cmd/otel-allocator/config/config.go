@@ -85,8 +85,7 @@ func Load(file string) (Config, error) {
 		targetAllocatorConfig := Config{
 			AllocationStrategy: &allocationStrategy,
 			LabelSelector: map[string]string{
-				"ama-metrics.component":          "ama-metrics-targetallocator",
-				"ama-metrics.component/instance": "ama-metrics-targetallocator-ta-container",
+				"rsName": "ama-metrics",
 			},
 		}
 		return targetAllocatorConfig, err
