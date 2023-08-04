@@ -78,7 +78,6 @@ type CLIConfig struct {
 
 func Load(file string) (Config, error) {
 	var cfg Config
-
 	if err := unmarshal(&cfg, file); err != nil {
 		return Config{}, err
 	}
@@ -86,6 +85,7 @@ func Load(file string) (Config, error) {
 }
 
 func unmarshal(cfg *Config, configFile string) error {
+
 	yamlFile, err := os.ReadFile(configFile)
 	if err != nil {
 		return err

@@ -18,8 +18,8 @@ import (
 	"context"
 	"os"
 	"os/signal"
-	"syscall"
 	"strings"
+	"syscall"
 
 	gokitlog "github.com/go-kit/log"
 	"github.com/oklog/run"
@@ -78,7 +78,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Config file will not exist at startup, so not attempting to load the file which results in errors and just using defaults here.
+	// Config file will not exist at startup, so not attempting to load the file which results in an error and just using defaults here.
 	cfg := config.Config{
 		LabelSelector: map[string]string{
 			"rsName": "ama-metrics",
