@@ -77,9 +77,12 @@ func main() {
 		setupLog.Error(err, "Failed to parse parameters")
 		os.Exit(1)
 	}
-	cfg, configLoadErr := config.Load(*cliConf.ConfigFilePath)
-	if configLoadErr != nil {
-		setupLog.Error(configLoadErr, "Unable to load configuration")
+
+	// Config file will not exist at startup, so not attempting to load the file which results in errors and just using defaults here.
+	cfg := config.Config{
+		LabelSelector: map[string]string{
+			"rsName": "ama-metrics",
+		},
 	}
 
 	if validationErr := config.ValidateConfig(&cfg, &cliConf); validationErr != nil {

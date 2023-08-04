@@ -80,24 +80,12 @@ func Load(file string) (Config, error) {
 	var cfg Config
 
 	if err := unmarshal(&cfg, file); err != nil {
-		// returning Config with default labels since file is not present at startup
-		allocationStrategy := "consistent-hashing"
-		targetAllocatorConfig := Config{
-			AllocationStrategy: &allocationStrategy,
-			LabelSelector: map[string]string{
-				"rsName": "ama-metrics",
-			},
-		}
-		return targetAllocatorConfig, err
+		return Config{}, err
 	}
 	return cfg, nil
 }
 
 func unmarshal(cfg *Config, configFile string) error {
-	// Check if file exists at startup, if not return appropriate error message
-	if _, err := os.Stat(configFile); errors.Is(err, os.ErrNotExist) {
-		return fmt.Errorf("ConfigFile %s does not exist yet, using defaults while watching for file updates", configFile)
-	}
 	yamlFile, err := os.ReadFile(configFile)
 	if err != nil {
 		return err
