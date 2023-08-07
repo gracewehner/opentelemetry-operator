@@ -185,7 +185,7 @@ func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Confi
 	if pmRetrieveErr != nil {
 		return nil, pmRetrieveErr
 	}
-	fmt.Infof("Reached here - 1")
+	w.logger.Info("Reached here - 1")
 
 	generatedConfig, err := w.configGenerator.GenerateServerConfiguration(
 		"30s",
@@ -207,12 +207,12 @@ func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Confi
 	if err != nil {
 		return nil, err
 	}
-	fmt.Infof("Reached here - 2")
+	w.logger.Info("Reached here - 2")
 
 	promCfg := &promconfig.Config{}
 	unmarshalErr := yaml.Unmarshal(generatedConfig, promCfg)
 	if unmarshalErr != nil {
-		fmt.Infof("Reached here - error while unmarshalling")
+		w.logger.Info("Reached here - error while unmarshalling")
 		return nil, unmarshalErr
 	}
 
