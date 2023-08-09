@@ -7,16 +7,16 @@ COPY ./prometheus-operator/go.mod ./prometheus-operator/go.sum ./prometheus-oper
 WORKDIR /app/prometheus-operator/
 RUN go mod download
 
-WORKDIR /app
-COPY ./prometheus-operator/pkg/apis/monitoring/go.mod ./prometheus-operator/pkg/apis/monitoring/go.sum /app/prometheus-operator/pkg/apis/monitoring/
-WORKDIR /app/prometheus-operator/pkg/apis/monitoring/
-RUN go mod download
+# WORKDIR /app
+# COPY ./prometheus-operator/pkg/apis/monitoring/go.mod ./prometheus-operator/pkg/apis/monitoring/go.sum /app/prometheus-operator/pkg/apis/monitoring/
+# WORKDIR /app/prometheus-operator/pkg/apis/monitoring/
+# RUN go mod download
 
 
-WORKDIR /app
-COPY ./prometheus-operator/pkg/client/go.mod ./prometheus-operator/pkg/client/go.sum /app/prometheus-operator/pkg/client/
-WORKDIR /app/prometheus-operator/pkg/client/
-RUN go mod download
+# WORKDIR /app
+# COPY ./prometheus-operator/pkg/client/go.mod ./prometheus-operator/pkg/client/go.sum /app/prometheus-operator/pkg/client/
+# WORKDIR /app/prometheus-operator/pkg/client/
+# RUN go mod download
 
 WORKDIR /app
 
