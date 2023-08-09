@@ -2,11 +2,17 @@ module github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator
 
 go 1.20
 
-replace github.com/prometheus-operator/prometheus-operator => ./prometheus-operator
+// replace github.com/prometheus-operator/prometheus-operator => ./prometheus-operator
 
-replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
+// replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
 
-replace github.com/prometheus-operator/prometheus-operator/pkg/client => ./prometheus-operator/pkg/client
+// replace github.com/prometheus-operator/prometheus-operator/pkg/client => ./prometheus-operator/pkg/client
+
+replace github.com/rashmichandrashekar/prometheus-operator => ./prometheus-operator
+
+replace github.com/rashmichandrashekar/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
+
+replace github.com/rashmichandrashekar/prometheus-operator/pkg/client => ./prometheus-operator/pkg/client
 
 require (
 	github.com/buraksezer/consistent v0.10.0
@@ -19,9 +25,12 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/cnf/structhash v0.0.0-20201127153200-e1b16c1ebc08
 	github.com/oklog/run v1.1.0
-	github.com/prometheus-operator/prometheus-operator v0.66.0
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.66.0
-	github.com/prometheus-operator/prometheus-operator/pkg/client v0.66.0
+	// github.com/prometheus-operator/prometheus-operator v0.66.0
+	// github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.66.0
+	// github.com/prometheus-operator/prometheus-operator/pkg/client v0.66.0
+	github.com/rashmichandrashekar/prometheus-operator v0.0.0-00010101000000-000000000000
+	github.com/rashmichandrashekar/prometheus-operator/pkg/apis/monitoring v0.0.0-00010101000000-000000000000
+	github.com/rashmichandrashekar/prometheus-operator/pkg/client v0.0.0-00010101000000-000000000000
 	github.com/prometheus/client_golang v1.16.0
 	github.com/prometheus/common v0.44.0
 	github.com/prometheus/prometheus v0.44.0
