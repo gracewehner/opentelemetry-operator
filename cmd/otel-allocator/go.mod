@@ -4,7 +4,7 @@ go 1.20
 
 replace github.com/prometheus-operator/prometheus-operator => ./prometheus-operator
 
-// replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
+replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
 
 // replace github.com/prometheus-operator/prometheus-operator/pkg/client => ./prometheus-operator/pkg/client
 
