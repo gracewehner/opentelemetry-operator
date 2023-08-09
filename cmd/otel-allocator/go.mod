@@ -2,6 +2,8 @@ module github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator
 
 go 1.20
 
+replace github.com/prometheus-operator/prometheus-operator => ../../../prometheus-operator
+
 require (
 	github.com/buraksezer/consistent v0.10.0
 	github.com/cespare/xxhash/v2 v2.2.0
@@ -28,8 +30,6 @@ require (
 	k8s.io/klog/v2 v2.100.1
 	sigs.k8s.io/controller-runtime v0.15.0
 )
-
-replace github.com/prometheus-operator/prometheus-operator => ../../../prometheus-operator/prometheus-operator
 
 require (
 	cloud.google.com/go/compute v1.18.0 // indirect
