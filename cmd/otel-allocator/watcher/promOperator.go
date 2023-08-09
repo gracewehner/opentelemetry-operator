@@ -20,7 +20,6 @@ import (
 
 	"github.com/go-kit/log"
 	"github.com/go-logr/logr"
-
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	promv1alpha1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1alpha1"
 	"github.com/prometheus-operator/prometheus-operator/pkg/assets"
@@ -29,7 +28,6 @@ import (
 	"github.com/prometheus-operator/prometheus-operator/pkg/prometheus"
 	promconfig "github.com/prometheus/prometheus/config"
 	kubeDiscovery "github.com/prometheus/prometheus/discovery/kubernetes"
-
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
