@@ -29,7 +29,7 @@ require (
 	sigs.k8s.io/controller-runtime v0.15.0
 )
 
-replace github.com/prometheus-operator/prometheus-operator => ../../../prometheus-operator
+replace github.com/prometheus-operator/prometheus-operator => ../../../prometheus-operator/prometheus-operator
 
 require (
 	cloud.google.com/go/compute v1.18.0 // indirect
