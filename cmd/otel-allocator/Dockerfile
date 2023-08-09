@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/oss/go/microsoft/golang:1.20 as builder
 WORKDIR /app
 
 # Copy prometheus-operator repo files
-COPY prometheus-operator prometheus-operator
+COPY ../prometheus-operator prometheus-operator
 
 WORKDIR /app/prometheus-operator/
 
