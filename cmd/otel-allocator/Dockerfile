@@ -3,6 +3,15 @@ FROM mcr.microsoft.com/oss/go/microsoft/golang:1.20 as builder
 
 WORKDIR /app
 
+# Copy prometheus-operator repo files
+COPY prometheus-operator prometheus-operator
+
+WORKDIR /app/prometheus-operator/
+
+RUN go mod download
+
+WORKDIR /app
+
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
