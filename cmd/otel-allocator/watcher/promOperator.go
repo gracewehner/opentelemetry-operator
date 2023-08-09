@@ -39,6 +39,13 @@ import (
 	allocatorconfig "github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator/config"
 )
 
+const (
+	// AzPodMonitorsKind   = "AzPodMonitor"
+	AzPodMonitorName     = "azpodmonitors"
+	AzServiceMonitorName = "azservicemonitors"
+	// AzPodMonitorKindKey = "azpodmonitor"
+)
+
 func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliConfig allocatorconfig.CLIConfig) (*PrometheusCRWatcher, error) {
 	mClient, err := monitoringclient.NewForConfig(cliConfig.ClusterConfig)
 	if err != nil {
@@ -110,19 +117,19 @@ func getSelector(s map[string]string) labels.Selector {
 
 // getInformers returns a map of informers for the given resources.
 func getInformers(factory informers.FactoriesForNamespaces) (map[string]*informers.ForResource, error) {
-	serviceMonitorInformers, err := informers.NewInformersForResource(factory, monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
+	serviceMonitorInformers, err := informers.NewInformersForResource(factory, monitoringv1.SchemeGroupVersion.WithResource(AzServiceMonitorName))
 	if err != nil {
 		return nil, err
 	}
 
-	podMonitorInformers, err := informers.NewInformersForResource(factory, monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.PodMonitorName))
+	podMonitorInformers, err := informers.NewInformersForResource(factory, monitoringv1.SchemeGroupVersion.WithResource(AzPodMonitorName))
 	if err != nil {
 		return nil, err
 	}
 
 	return map[string]*informers.ForResource{
-		monitoringv1.ServiceMonitorName: serviceMonitorInformers,
-		monitoringv1.PodMonitorName:     podMonitorInformers,
+		AzServiceMonitorName: serviceMonitorInformers,
+		AzPodMonitorName:     podMonitorInformers,
 	}, nil
 }
 
@@ -167,7 +174,7 @@ func (w *PrometheusCRWatcher) Close() error {
 func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Config, error) {
 	store := assets.NewStore(w.k8sClient.CoreV1(), w.k8sClient.CoreV1())
 	serviceMonitorInstances := make(map[string]*monitoringv1.ServiceMonitor)
-	smRetrieveErr := w.informers[monitoringv1.ServiceMonitorName].ListAll(w.serviceMonitorSelector, func(sm interface{}) {
+	smRetrieveErr := w.informers[AzServiceMonitorName].ListAll(w.serviceMonitorSelector, func(sm interface{}) {
 		monitor := sm.(*monitoringv1.ServiceMonitor)
 		key, _ := cache.DeletionHandlingMetaNamespaceKeyFunc(monitor)
 		w.addStoreAssetsForServiceMonitor(ctx, monitor.Name, monitor.Namespace, monitor.Spec.Endpoints, store)
@@ -178,7 +185,7 @@ func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Confi
 	}
 
 	podMonitorInstances := make(map[string]*monitoringv1.PodMonitor)
-	pmRetrieveErr := w.informers[monitoringv1.PodMonitorName].ListAll(w.podMonitorSelector, func(pm interface{}) {
+	pmRetrieveErr := w.informers[AzPodMonitorName].ListAll(w.podMonitorSelector, func(pm interface{}) {
 		monitor := pm.(*monitoringv1.PodMonitor)
 		key, _ := cache.DeletionHandlingMetaNamespaceKeyFunc(monitor)
 		w.addStoreAssetsForPodMonitor(ctx, monitor.Name, monitor.Namespace, monitor.Spec.PodMetricsEndpoints, store)
