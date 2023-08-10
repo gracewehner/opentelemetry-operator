@@ -81,8 +81,8 @@ func main() {
 	// Config file will not exist at startup, so not attempting to load the file which results in an error and just using defaults here.
 	cfg := config.Config{
 		LabelSelector: map[string]string{
-			"rsName": "ama-metrics",
-			// "kubernetes.azure.com/managedby": "aks",
+			"rsName":                         "ama-metrics",
+			"kubernetes.azure.com/managedby": "aks",
 		},
 	}
 
