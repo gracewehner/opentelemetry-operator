@@ -51,6 +51,8 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 
 	factory := informers.NewMonitoringInformerFactories(map[string]struct{}{v1.NamespaceAll: {}}, map[string]struct{}{}, mClient, allocatorconfig.DefaultResyncTime, nil) //TODO decide what strategy to use regarding namespaces
 
+	monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
+
 	monitoringInformers, err := getInformers(factory)
 	if err != nil {
 		return nil, err
@@ -110,7 +112,7 @@ func getSelector(s map[string]string) labels.Selector {
 // getInformers returns a map of informers for the given resources.
 func getInformers(factory informers.FactoriesForNamespaces) (map[string]*informers.ForResource, error) {
 	//monitoringv1.SetSchemeGroupVersion("azmonitoring.coreos.com")
-	monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
+	// monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
 	serviceMonitorInformers, err := informers.NewInformersForResource(factory, monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 	if err != nil {
 		return nil, err
