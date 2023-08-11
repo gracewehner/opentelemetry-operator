@@ -67,6 +67,7 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 			},
 		},
 	}
+	logger.Info("my log-1:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 
 	generator, err := prometheus.NewConfigGenerator(log.NewNopLogger(), prom, true) // TODO replace Nop?
 	if err != nil {
@@ -76,6 +77,8 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 	servMonSelector := getSelector(cfg.ServiceMonitorSelector)
 
 	podMonSelector := getSelector(cfg.PodMonitorSelector)
+
+	logger.Info("my log-2:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 
 	return &PrometheusCRWatcher{
 		logger:                 logger,
@@ -138,7 +141,10 @@ func (w *PrometheusCRWatcher) Watch(upstreamEvents chan Event, upstreamErrors ch
 	}
 	success := true
 
+	w.logger.Info("my log-in watch:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
+
 	for name, resource := range w.informers {
+		w.logger.Info("my log-in informers loop:", "resource", resource)
 		resource.Start(w.stopChannel)
 
 		if ok := cache.WaitForNamedCacheSync(name, w.stopChannel, resource.HasSynced); !ok {
@@ -169,6 +175,7 @@ func (w *PrometheusCRWatcher) Close() error {
 }
 
 func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Config, error) {
+	w.logger.Info("in load config")
 	store := assets.NewStore(w.k8sClient.CoreV1(), w.k8sClient.CoreV1())
 	serviceMonitorInstances := make(map[string]*monitoringv1.ServiceMonitor)
 
