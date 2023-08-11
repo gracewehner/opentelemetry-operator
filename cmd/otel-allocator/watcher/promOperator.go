@@ -40,7 +40,7 @@ import (
 
 func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliConfig allocatorconfig.CLIConfig) (*PrometheusCRWatcher, error) {
 	logger.Info(" Rashmi - In NewPrometheusCRWatcher")
-	// monitoringv1.CustomInit("azmonitoring.coreos.com")
+	monitoringv1.CustomInit("azmonitoring.coreos.com")
 	logger.Info(" Rashmi - Successfully set custom group")
 
 	mClient, err := monitoringclient.NewForConfig(cliConfig.ClusterConfig)
