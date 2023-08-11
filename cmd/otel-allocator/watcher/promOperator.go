@@ -145,11 +145,16 @@ func (w *PrometheusCRWatcher) Watch(upstreamEvents chan Event, upstreamErrors ch
 
 	for name, resource := range w.informers {
 		w.logger.Info("my log-in informers loop:", "resource", resource)
+		w.logger.Info("my log-in informers loop:", "name", name)
+
 		resource.Start(w.stopChannel)
+		w.logger.Info("my log-in informers start succeeded")
 
 		if ok := cache.WaitForNamedCacheSync(name, w.stopChannel, resource.HasSynced); !ok {
+			w.logger.Info("my log-in cache not ok")
 			success = false
 		}
+		w.logger.Info("my log-in cache ok")
 		resource.AddEventHandler(cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				upstreamEvents <- event
@@ -161,10 +166,12 @@ func (w *PrometheusCRWatcher) Watch(upstreamEvents chan Event, upstreamErrors ch
 				upstreamEvents <- event
 			},
 		})
+		w.logger.Info("added event handler")
 	}
 	if !success {
 		return fmt.Errorf("failed to sync cache")
 	}
+	w.logger.Info("rashmi-success")
 	<-w.stopChannel
 	return nil
 }
