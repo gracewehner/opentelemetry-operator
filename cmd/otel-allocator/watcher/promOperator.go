@@ -53,7 +53,7 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 
 	monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
 
-	logger.Info("my log: %v", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
+	logger.Info("my log:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 	monitoringInformers, err := getInformers(factory)
 	if err != nil {
 		return nil, err
@@ -171,6 +171,9 @@ func (w *PrometheusCRWatcher) Close() error {
 func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Config, error) {
 	store := assets.NewStore(w.k8sClient.CoreV1(), w.k8sClient.CoreV1())
 	serviceMonitorInstances := make(map[string]*monitoringv1.ServiceMonitor)
+
+	w.logger.Info("servicemonitor informer", "svc-mon-informer", w.informers[monitoringv1.ServiceMonitorName])
+
 	smRetrieveErr := w.informers[monitoringv1.ServiceMonitorName].ListAll(w.serviceMonitorSelector, func(sm interface{}) {
 		monitor := sm.(*monitoringv1.ServiceMonitor)
 		key, _ := cache.DeletionHandlingMetaNamespaceKeyFunc(monitor)
