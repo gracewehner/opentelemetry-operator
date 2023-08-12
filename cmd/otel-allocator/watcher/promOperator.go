@@ -20,7 +20,8 @@ import (
 
 	"github.com/go-kit/log"
 	"github.com/go-logr/logr"
-	monitoring "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring"
+
+	// monitoring "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	promv1alpha1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1alpha1"
 	"github.com/prometheus-operator/prometheus-operator/pkg/assets"
@@ -40,7 +41,7 @@ import (
 )
 
 func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliConfig allocatorconfig.CLIConfig) (*PrometheusCRWatcher, error) {
-	monitoring.GroupName = "azmonitoring.coreos.com"
+	// monitoring.GroupName = "azmonitoring.coreos.com"
 	monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
 	logger.Info(" Rashmi - In NewPrometheusCRWatcher")
 	// monitoringv1.CustomInit("azmonitoring.coreos.com")
