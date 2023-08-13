@@ -21,7 +21,6 @@ import (
 	"github.com/go-kit/log"
 	"github.com/go-logr/logr"
 
-	// monitoring "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	promv1alpha1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1alpha1"
 	"github.com/prometheus-operator/prometheus-operator/pkg/assets"
@@ -151,7 +150,6 @@ func (w *PrometheusCRWatcher) Watch(upstreamEvents chan Event, upstreamErrors ch
 				upstreamEvents <- event
 			},
 		})
-		w.logger.Info("added event handler")
 	}
 	if !success {
 		return fmt.Errorf("failed to sync cache")
@@ -168,7 +166,6 @@ func (w *PrometheusCRWatcher) Close() error {
 func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Config, error) {
 	store := assets.NewStore(w.k8sClient.CoreV1(), w.k8sClient.CoreV1())
 	serviceMonitorInstances := make(map[string]*monitoringv1.ServiceMonitor)
-
 	smRetrieveErr := w.informers[monitoringv1.ServiceMonitorName].ListAll(w.serviceMonitorSelector, func(sm interface{}) {
 		monitor := sm.(*monitoringv1.ServiceMonitor)
 		key, _ := cache.DeletionHandlingMetaNamespaceKeyFunc(monitor)
