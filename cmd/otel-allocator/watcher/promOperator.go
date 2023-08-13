@@ -40,10 +40,6 @@ import (
 )
 
 func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliConfig allocatorconfig.CLIConfig) (*PrometheusCRWatcher, error) {
-	// monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
-	logger.Info(" Rashmi - In NewPrometheusCRWatcher")
-	logger.Info(" Rashmi - Successfully set custom group")
-
 	mClient, err := monitoringclient.NewForConfig(cliConfig.ClusterConfig)
 	if err != nil {
 		return nil, err
@@ -56,9 +52,6 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 
 	factory := informers.NewMonitoringInformerFactories(map[string]struct{}{v1.NamespaceAll: {}}, map[string]struct{}{}, mClient, allocatorconfig.DefaultResyncTime, nil) //TODO decide what strategy to use regarding namespaces
 
-	// monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
-
-	logger.Info("my log:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 	monitoringInformers, err := getInformers(factory)
 	if err != nil {
 		return nil, err
@@ -72,7 +65,6 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 			},
 		},
 	}
-	logger.Info("my log-1:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 
 	generator, err := prometheus.NewConfigGenerator(log.NewNopLogger(), prom, true) // TODO replace Nop?
 	if err != nil {
@@ -82,8 +74,6 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 	servMonSelector := getSelector(cfg.ServiceMonitorSelector)
 
 	podMonSelector := getSelector(cfg.PodMonitorSelector)
-
-	logger.Info("my log-2:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 
 	return &PrometheusCRWatcher{
 		logger:                 logger,
@@ -120,8 +110,6 @@ func getSelector(s map[string]string) labels.Selector {
 
 // getInformers returns a map of informers for the given resources.
 func getInformers(factory informers.FactoriesForNamespaces) (map[string]*informers.ForResource, error) {
-	//monitoringv1.SetSchemeGroupVersion("azmonitoring.coreos.com")
-	// monitoringv1.SchemeGroupVersion = schema.GroupVersion{Group: "azmonitoring.coreos.com", Version: "v1"}
 	serviceMonitorInformers, err := informers.NewInformersForResource(factory, monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
 	if err != nil {
 		return nil, err
@@ -146,20 +134,12 @@ func (w *PrometheusCRWatcher) Watch(upstreamEvents chan Event, upstreamErrors ch
 	}
 	success := true
 
-	w.logger.Info("my log-in watch:", "schemegroupversion", monitoringv1.SchemeGroupVersion.WithResource(monitoringv1.ServiceMonitorName))
-
 	for name, resource := range w.informers {
-		w.logger.Info("my log-in informers loop:", "resource", resource)
-		w.logger.Info("my log-in informers loop:", "name", name)
-
 		resource.Start(w.stopChannel)
-		w.logger.Info("my log-in informers start succeeded")
 
 		if ok := cache.WaitForNamedCacheSync(name, w.stopChannel, resource.HasSynced); !ok {
-			w.logger.Info("my log-in cache not ok")
 			success = false
 		}
-		w.logger.Info("my log-in cache ok")
 		resource.AddEventHandler(cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				upstreamEvents <- event
@@ -176,7 +156,6 @@ func (w *PrometheusCRWatcher) Watch(upstreamEvents chan Event, upstreamErrors ch
 	if !success {
 		return fmt.Errorf("failed to sync cache")
 	}
-	w.logger.Info("rashmi-success")
 	<-w.stopChannel
 	return nil
 }
@@ -187,11 +166,8 @@ func (w *PrometheusCRWatcher) Close() error {
 }
 
 func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Config, error) {
-	w.logger.Info("in load config")
 	store := assets.NewStore(w.k8sClient.CoreV1(), w.k8sClient.CoreV1())
 	serviceMonitorInstances := make(map[string]*monitoringv1.ServiceMonitor)
-
-	w.logger.Info("servicemonitor informer", "svc-mon-informer", w.informers[monitoringv1.ServiceMonitorName])
 
 	smRetrieveErr := w.informers[monitoringv1.ServiceMonitorName].ListAll(w.serviceMonitorSelector, func(sm interface{}) {
 		monitor := sm.(*monitoringv1.ServiceMonitor)
