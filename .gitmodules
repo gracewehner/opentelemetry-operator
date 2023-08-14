@@ -1,0 +1,3 @@
+[submodule "cmd/otel-allocator/prometheus-operator"]
+	path = cmd/otel-allocator/prometheus-operator
+	url = https://github.com/rashmichandrashekar/prometheus-operator
