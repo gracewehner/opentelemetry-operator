@@ -2,6 +2,12 @@ module github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator
 
 go 1.20
 
+replace github.com/prometheus-operator/prometheus-operator => ./prometheus-operator
+
+replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
+
+replace github.com/prometheus-operator/prometheus-operator/pkg/client => ./prometheus-operator/pkg/client
+
 require (
 	github.com/buraksezer/consistent v0.10.0
 	github.com/cespare/xxhash/v2 v2.2.0
