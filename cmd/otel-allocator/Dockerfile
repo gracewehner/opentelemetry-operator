@@ -12,7 +12,7 @@ RUN go mod download
 
 
 WORKDIR /app
-COPY ./prometheus-operator/pkg/client/go.mod ./prometheus-operator/pkg/client/go.sum /app/prometheus-operator/pkg/client/
+COPY ./prometheus-operator/pkg/client/go.mod ./prometheus-operator/pkg/client/go.sum ./prometheus-operator/pkg/client/
 WORKDIR /app/prometheus-operator/pkg/client/
 RUN go mod download
 
