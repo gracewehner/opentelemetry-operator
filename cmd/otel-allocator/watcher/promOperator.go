@@ -33,6 +33,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
+	"k8s.io/utils/pointer"
 
 	allocatorconfig "github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator/config"
 )
@@ -60,6 +61,9 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 		Spec: monitoringv1.PrometheusSpec{
 			CommonPrometheusFields: monitoringv1.CommonPrometheusFields{
 				ScrapeInterval: monitoringv1.Duration("30s"),
+				EnforcedLabelLimit: pointer.Uint64(uint64(63)),
+				EnforcedLabelNameLengthLimit: pointer.Uint64(uint64(511)),
+				EnforcedLabelValueLengthLimit: pointer.Uint64(uint64(1023)),
 			},
 		},
 	}
