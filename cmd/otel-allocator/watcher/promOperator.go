@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/go-kit/log"
 	"github.com/go-logr/logr"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	promv1alpha1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1alpha1"
@@ -64,7 +63,7 @@ func NewPrometheusCRWatcher(logger logr.Logger, cfg allocatorconfig.Config, cliC
 		},
 	}
 
-	generator, err := prometheus.NewConfigGenerator(log.NewNopLogger(), prom, true) // TODO replace Nop?
+	generator, err := prometheus.NewConfigGenerator(logger, prom, true) // TODO replace Nop?
 	if err != nil {
 		return nil, err
 	}
