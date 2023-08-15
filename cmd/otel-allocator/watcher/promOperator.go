@@ -186,6 +186,84 @@ func (w *PrometheusCRWatcher) LoadConfig(ctx context.Context) (*promconfig.Confi
 		return nil, pmRetrieveErr
 	}
 
+	// // Generated config to hold all the validated service and pod monitor configurations
+	// generatedConfig := []byte
+
+	// // Validation logic to make sure one erraneous CR doesnt cause all the CRs to fail from being applied
+	// // service monitors
+	// for skey, smInstance := range serviceMonitorInstances {
+	// 	w.logger.Info("smon-key", "smon", skey)
+	// 	generatedConfigSmon, err := w.configGenerator.GenerateServerConfiguration(
+	// 		"30s",
+	// 		"",
+	// 		nil,
+	// 		nil,
+	// 		monitoringv1.TSDBSpec{},
+	// 		nil,
+	// 		nil,
+	// 		smInstance,
+	// 		map[string]*monitoringv1.PodMonitor{},
+	// 		map[string]*monitoringv1.Probe{},
+	// 		map[string]*promv1alpha1.ScrapeConfig{},
+	// 		store,
+	// 		nil,
+	// 		nil,
+	// 		nil,
+	// 		[]string{})
+	// 	if err != nil {
+	// 		//return nil, err
+	// 		w.logger.Info("Error generating server configuration for :", "service monitor", skey)
+	// 		w.logger.Info("Removing service monitor from configuration:", "service monitor", skey)
+	// 		delete(serviceMonitorInstances, skey)
+	// 		continue
+	// 	}
+	// 	promCfgSmon := &promconfig.Config{}
+	// 	unmarshalErrSmon := yaml.Unmarshal(generatedConfigSmon, promCfgSmon)
+	// 	if unmarshalErrSmon != nil {
+	// 		w.logger.Info("Error unmarshalling prometheus configuration for :", "service monitor", skey)
+	// 		w.logger.Info("removing service monitor from configuration:", "service monitor", skey)
+	// 		delete(serviceMonitorInstances, skey)
+	// 	}
+	// 	append(generatedConfig, generatedConfigSmon)
+	// }
+
+	// // pod monitors
+	// for pkey, pmInstance := range podMonitorInstances {
+	// 	w.logger.Info("pmon-key", "pmon", pkey)
+	// 	generatedConfigPmon, err := w.configGenerator.GenerateServerConfiguration(
+	// 		"30s",
+	// 		"",
+	// 		nil,
+	// 		nil,
+	// 		monitoringv1.TSDBSpec{},
+	// 		nil,
+	// 		nil,
+	// 		map[string]*monitoringv1.ServiceMonitor{},
+	// 		pmInstance,
+	// 		map[string]*monitoringv1.Probe{},
+	// 		map[string]*promv1alpha1.ScrapeConfig{},
+	// 		store,
+	// 		nil,
+	// 		nil,
+	// 		nil,
+	// 		[]string{})
+	// 	if err != nil {
+	// 		//return nil, err
+	// 		w.logger.Info("Error generating server configuration for :", "pod monitor", pkey)
+	// 		w.logger.Info("Removing pod monitor from configuration:", "pod monitor", pkey)
+	// 		delete(podMonitorInstances, pkey)
+	// 		continue
+	// 	}
+	// 	promCfgPmon := &promconfig.Config{}
+	// 	unmarshalErrPmon := yaml.Unmarshal(generatedConfigPmon, promCfgPmon)
+	// 	if unmarshalErrPmon != nil {
+	// 		w.logger.Info("Error unmarshalling prometheus configuration for :", "pod monitor", pkey)
+	// 		w.logger.Info("removing pod monitor from configuration:", "pod monitor", pkey)
+	// 		delete(podMonitorInstances, pkey)
+	// 	}
+	// 	append(generatedConfig, generatedConfigPmon)
+	// }
+
 	generatedConfig, err := w.configGenerator.GenerateServerConfiguration(
 		"30s",
 		"",
