@@ -84,13 +84,12 @@ func (k *Client) Watch(ctx context.Context, labelMap map[string]string, fn func(
 	}
 
 	fn(collectorMap)
-
+	k.log.Info("Rashmi in collectorWatch watch - end")
 	for {
 		if !k.restartWatch(ctx, opts, collectorMap, fn) {
 			return nil
 		}
 	}
-	k.log.Info("Rashmi in collectorWatch watch - end")
 }
 
 func (k *Client) restartWatch(ctx context.Context, opts metav1.ListOptions, collectorMap map[string]*allocation.Collector, fn func(collectors map[string]*allocation.Collector)) bool {
@@ -142,10 +141,10 @@ func runWatch(ctx context.Context, k *Client, c <-chan watch.Event, collectorMap
 			case watch.Deleted:
 				delete(collectorMap, pod.Name)
 			}
+			k.log.Info("Rashmi in collectorWatch runWatch - end")
 			fn(collectorMap)
 		}
 	}
-	k.log.Info("Rashmi in collectorWatch runWatch - end")
 }
 
 func (k *Client) Close() {
