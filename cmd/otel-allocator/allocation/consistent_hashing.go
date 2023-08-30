@@ -105,6 +105,7 @@ func (c *consistentHashingAllocator) addCollectorTargetItemMapping(tg *target.It
 // NOTE: by not creating a new target item, there is the potential for a race condition where we modify this target
 // item while it's being encoded by the server JSON handler.
 func (c *consistentHashingAllocator) addTargetToTargetItems(tg *target.Item) {
+	allocator.log.Info("Rashmi - In addTargetToTargetItems begin")
 	// Check if this is a reassignment, if so, decrement the previous collector's NumTargets
 	if previousColName, ok := c.collectors[tg.CollectorName]; ok {
 		previousColName.NumTargets--
@@ -117,6 +118,7 @@ func (c *consistentHashingAllocator) addTargetToTargetItems(tg *target.Item) {
 	c.addCollectorTargetItemMapping(tg)
 	c.collectors[colOwner.String()].NumTargets++
 	TargetsPerCollector.WithLabelValues(colOwner.String(), consistentHashingStrategyName).Set(float64(c.collectors[colOwner.String()].NumTargets))
+	allocator.log.Info("Rashmi - In addTargetToTargetItems end")
 }
 
 // handleTargets receives the new and removed targets and reconciles the current state.
@@ -151,6 +153,7 @@ func (c *consistentHashingAllocator) handleTargets(diff diff.Changes[*target.Ite
 // Any removals are removed from the allocator's collectors. New collectors are added to the allocator's collector map.
 // Finally, update all targets' collectors to match the consistent hashing.
 func (c *consistentHashingAllocator) handleCollectors(diff diff.Changes[*Collector]) {
+	allocator.log.Info("Rashmi - In handleCollectors begin")
 	// Clear removed collectors
 	for _, k := range diff.Removals() {
 		delete(c.collectors, k.Name)
@@ -168,6 +171,7 @@ func (c *consistentHashingAllocator) handleCollectors(diff diff.Changes[*Collect
 	for _, item := range c.targetItems {
 		c.addTargetToTargetItems(item)
 	}
+	allocator.log.Info("Rashmi - In handleCollectors end")
 }
 
 // SetTargets accepts a list of targets that will be used to make
@@ -200,6 +204,7 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 // SetCollectors sets the set of collectors with key=collectorName, value=Collector object.
 // This method is called when Collectors are added or removed.
 func (c *consistentHashingAllocator) SetCollectors(collectors map[string]*Collector) {
+	allocator.log.Info("Rashmi - In SetCollectors begin")
 	timer := prometheus.NewTimer(TimeToAssign.WithLabelValues("SetCollectors", consistentHashingStrategyName))
 	defer timer.ObserveDuration()
 
@@ -217,6 +222,7 @@ func (c *consistentHashingAllocator) SetCollectors(collectors map[string]*Collec
 	if len(collectorsDiff.Additions()) != 0 || len(collectorsDiff.Removals()) != 0 {
 		c.handleCollectors(collectorsDiff)
 	}
+	allocator.log.Info("Rashmi - In SetCollectors end")
 }
 
 func (c *consistentHashingAllocator) GetTargetsForCollectorAndJob(collector string, job string) []*target.Item {

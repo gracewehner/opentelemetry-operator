@@ -78,8 +78,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	allocationStrategy := "consistent-hashing"
 	// Config file will not exist at startup, so not attempting to load the file which results in an error and just using defaults here.
 	cfg := config.Config{
+		AllocationStrategy: &allocationStrategy,
 		LabelSelector: map[string]string{
 			"rsName":                         "ama-metrics",
 			"kubernetes.azure.com/managedby": "aks",
