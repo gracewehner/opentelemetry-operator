@@ -151,6 +151,7 @@ func (allocator *leastWeightedAllocator) addTargetToTargetItems(tg *target.Item)
 // Any removals are removed from the allocator's targetItems and unassigned from the corresponding collector.
 // Any net-new additions are assigned to the next available collector.
 func (allocator *leastWeightedAllocator) handleTargets(diff diff.Changes[*target.Item]) {
+	allocator.log.Info("Rashmi - In handleTargets begin")
 	// Check for removals
 	for k, item := range allocator.targetItems {
 		// if the current item is in the removals list
@@ -167,12 +168,15 @@ func (allocator *leastWeightedAllocator) handleTargets(diff diff.Changes[*target
 	for k, item := range diff.Additions() {
 		// Do nothing if the item is already there
 		if _, ok := allocator.targetItems[k]; ok {
+	allocator.log.Info("Rashmi - In handleTargets do nothing")
 			continue
 		} else {
 			// Add item to item pool and assign a collector
+	allocator.log.Info("Rashmi - In handleTargets do add targets condition")
 			allocator.addTargetToTargetItems(item)
 		}
 	}
+	allocator.log.Info("Rashmi - In handleTargets end")
 }
 
 // handleCollectors receives the new and removed collectors and reconciles the current state.
@@ -208,6 +212,10 @@ func (allocator *leastWeightedAllocator) handleCollectors(diff diff.Changes[*Col
 // load balancing decisions. This method should be called when there are
 // new targets discovered or existing targets are shutdown.
 func (allocator *leastWeightedAllocator) SetTargets(targets map[string]*target.Item) {
+	allocator.log.Info("Rashmi - In SetTargets begin")
+	allocator.log.Info("Rashmi - In SetTargets targets", "targets", targets)
+
+
 	timer := prometheus.NewTimer(TimeToAssign.WithLabelValues("SetTargets", leastWeightedStrategyName))
 	defer timer.ObserveDuration()
 
@@ -229,6 +237,7 @@ func (allocator *leastWeightedAllocator) SetTargets(targets map[string]*target.I
 	if len(targetsDiff.Additions()) != 0 || len(targetsDiff.Removals()) != 0 {
 		allocator.handleTargets(targetsDiff)
 	}
+	allocator.log.Info("Rashmi - In SetTargets end")
 }
 
 // SetCollectors sets the set of collectors with key=collectorName, value=Collector object.
