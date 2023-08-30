@@ -188,6 +188,7 @@ func (allocator *leastWeightedAllocator) handleCollectors(diff diff.Changes[*Col
 	}
 	// Insert the new collectors
 	for _, i := range diff.Additions() {
+	allocator.log.Info("Rashmi - In handleCollectors addition loop")
 		allocator.collectors[i.Name] = NewCollector(i.Name)
 	}
 
@@ -197,6 +198,9 @@ func (allocator *leastWeightedAllocator) handleCollectors(diff diff.Changes[*Col
 			allocator.addTargetToTargetItems(item)
 		}
 	}
+	allocator.log.Info("Rashmi - In handleCollectors - collectors", "collectors", allocator.collectors)
+	allocator.log.Info("Rashmi - In handleCollectors - targtargetItemsets", "targetItems", allocator.targetItems)
+
 	allocator.log.Info("Rashmi - In handleCollectors end")
 }
 
