@@ -106,6 +106,7 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 }
 
 func (m *Discoverer) Watch(fn func(targets map[string]*Item)) error {
+	m.log.Info("Rashmi: in discovery watch")
 	for {
 		select {
 		case <-m.close:
@@ -125,6 +126,7 @@ func (m *Discoverer) Watch(fn func(targets map[string]*Item)) error {
 				}
 				targetsDiscovered.WithLabelValues(jobName).Set(count)
 			}
+			m.log.Info("Rashmi: in discovery watch - targets", "targets", "targets")
 			fn(targets)
 		}
 	}
