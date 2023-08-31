@@ -167,10 +167,14 @@ func (c *consistentHashingAllocator) handleCollectors(diff diff.Changes[*Collect
 		c.consistentHasher.Add(c.collectors[i.Name])
 	}
 
+	allocator.log.Info("Rashmi - In handleCollectors - before reallocation- collectors", "collectors", allocator.collectors)
+
 	// Re-Allocate all targets
 	for _, item := range c.targetItems {
 		c.addTargetToTargetItems(item)
 	}
+	allocator.log.Info("Rashmi - In handleCollectors - after reallocation - collectors", "collectors", allocator.collectors)
+
 	c.log.Info("Rashmi - In handleCollectors end")
 }
 
