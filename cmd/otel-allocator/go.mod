@@ -2,6 +2,12 @@ module github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator
 
 go 1.20
 
+replace github.com/prometheus-operator/prometheus-operator => ./prometheus-operator
+
+replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => ./prometheus-operator/pkg/apis/monitoring
+
+replace github.com/prometheus-operator/prometheus-operator/pkg/client => ./prometheus-operator/pkg/client
+
 require (
 	github.com/buraksezer/consistent v0.10.0
 	github.com/cespare/xxhash/v2 v2.2.0
@@ -11,7 +17,7 @@ require (
 	github.com/go-kit/log v0.2.1
 	github.com/go-logr/logr v1.2.4
 	github.com/json-iterator/go v1.1.12
-	github.com/mitchellh/hashstructure v1.1.0
+	github.com/cnf/structhash v0.0.0-20201127153200-e1b16c1ebc08
 	github.com/oklog/run v1.1.0
 	github.com/prometheus-operator/prometheus-operator v0.66.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.66.0

@@ -15,8 +15,8 @@
 package target
 
 import (
+	"github.com/cnf/structhash"
 	"github.com/go-logr/logr"
-	"github.com/mitchellh/hashstructure"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/common/model"
@@ -40,7 +40,7 @@ type Discoverer struct {
 	close                chan struct{}
 	configsMap           map[allocatorWatcher.EventSource]*config.Config
 	hook                 discoveryHook
-	scrapeConfigsHash    uint64
+	scrapeConfigsHash    string
 	scrapeConfigsUpdater scrapeConfigsUpdater
 }
 
@@ -82,13 +82,15 @@ func (m *Discoverer) ApplyConfig(source allocatorWatcher.EventSource, cfg *confi
 		}
 	}
 
-	hash, err := hashstructure.Hash(jobToScrapeConfig, nil)
+	// hash, err := hashstructure.Hash(jobToScrapeConfig, nil)
+	hash, err := structhash.Hash(jobToScrapeConfig, 1)
 	if err != nil {
 		return err
 	}
 	// If the hash has changed, updated stored hash and send the new config.
 	// Otherwise skip updating scrape configs.
 	if m.scrapeConfigsUpdater != nil && m.scrapeConfigsHash != hash {
+		m.log.Info("ScrapeConfig hash is different, updating new scrapeconfig detected for ", "source", source.String())
 		err := m.scrapeConfigsUpdater.UpdateScrapeConfigResponse(jobToScrapeConfig)
 		if err != nil {
 			return err
