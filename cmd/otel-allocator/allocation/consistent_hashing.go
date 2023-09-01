@@ -199,16 +199,16 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 	// 	c.log.Info("No collector instances present, cannot set targets")
 	// 	return
 	// }
-
+	targetsDiff := Changes[Hasher]{}
 	// Compute target diff if hasher already has a set of targetitems
-	if len(c.targetItems.length) > 0 {
-		targetsDiff := diff.Maps(c.targetItems, targets)
+	if len(c.targetItems) > 0 {
+		targetsDiff = diff.Maps(c.targetItems, targets)
 	}
 
 	if len(c.collectors) == 0 {
 		c.log.Info("No collector instances present, saving targets to allocate to collector(s)")
 		// If there were no targets discovered previously, assign this as the new set of target items
-		if len(c.targetItems.length) == 0 {
+		if len(c.targetItems) == 0 {
 			c.log.Info("Not discovered any targets previously, saving targets found to the targetItems set")
 			for k, item := range targets {
 				c.targetItems[k] = item
