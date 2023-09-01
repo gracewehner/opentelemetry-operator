@@ -199,7 +199,7 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 	// 	c.log.Info("No collector instances present, cannot set targets")
 	// 	return
 	// }
-	targetsDiff := diff.Changes[diff.Hasher]{}
+	targetsDiff := diff.Changes[new map[string]diff.Hasher]
 	// Compute target diff if hasher already has a set of targetitems
 	if len(c.targetItems) > 0 {
 		targetsDiff = diff.Maps(c.targetItems, targets)
