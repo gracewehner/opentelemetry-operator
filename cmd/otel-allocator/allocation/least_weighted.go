@@ -137,21 +137,18 @@ func (allocator *leastWeightedAllocator) addCollectorTargetItemMapping(tg *targe
 // NOTE: by not creating a new target item, there is the potential for a race condition where we modify this target
 // item while it's being encoded by the server JSON handler.
 func (allocator *leastWeightedAllocator) addTargetToTargetItems(tg *target.Item) {
-	allocator.log.Info("Rashmi - In addTargetToTargetItems begin")
 	chosenCollector := allocator.findNextCollector()
 	tg.CollectorName = chosenCollector.Name
 	allocator.targetItems[tg.Hash()] = tg
 	allocator.addCollectorTargetItemMapping(tg)
 	chosenCollector.NumTargets++
 	TargetsPerCollector.WithLabelValues(chosenCollector.Name, leastWeightedStrategyName).Set(float64(chosenCollector.NumTargets))
-	allocator.log.Info("Rashmi - In addTargetToTargetItems end")
 }
 
 // handleTargets receives the new and removed targets and reconciles the current state.
 // Any removals are removed from the allocator's targetItems and unassigned from the corresponding collector.
 // Any net-new additions are assigned to the next available collector.
 func (allocator *leastWeightedAllocator) handleTargets(diff diff.Changes[*target.Item]) {
-	allocator.log.Info("Rashmi - In handleTargets begin")
 	// Check for removals
 	for k, item := range allocator.targetItems {
 		// if the current item is in the removals list
@@ -168,22 +165,18 @@ func (allocator *leastWeightedAllocator) handleTargets(diff diff.Changes[*target
 	for k, item := range diff.Additions() {
 		// Do nothing if the item is already there
 		if _, ok := allocator.targetItems[k]; ok {
-	allocator.log.Info("Rashmi - In handleTargets do nothing")
 			continue
 		} else {
 			// Add item to item pool and assign a collector
-	allocator.log.Info("Rashmi - In handleTargets do add targets condition")
 			allocator.addTargetToTargetItems(item)
 		}
 	}
-	allocator.log.Info("Rashmi - In handleTargets end")
 }
 
 // handleCollectors receives the new and removed collectors and reconciles the current state.
 // Any removals are removed from the allocator's collectors. New collectors are added to the allocator's collector map.
 // Finally, any targets of removed collectors are reallocated to the next available collector.
 func (allocator *leastWeightedAllocator) handleCollectors(diff diff.Changes[*Collector]) {
-	allocator.log.Info("Rashmi - In handleCollectors begin")
 	// Clear removed collectors
 	for _, k := range diff.Removals() {
 		delete(allocator.collectors, k.Name)
@@ -192,7 +185,6 @@ func (allocator *leastWeightedAllocator) handleCollectors(diff diff.Changes[*Col
 	}
 	// Insert the new collectors
 	for _, i := range diff.Additions() {
-	allocator.log.Info("Rashmi - In handleCollectors addition loop")
 		allocator.collectors[i.Name] = NewCollector(i.Name)
 	}
 
@@ -202,20 +194,12 @@ func (allocator *leastWeightedAllocator) handleCollectors(diff diff.Changes[*Col
 			allocator.addTargetToTargetItems(item)
 		}
 	}
-	allocator.log.Info("Rashmi - In handleCollectors - collectors", "collectors", allocator.collectors)
-	allocator.log.Info("Rashmi - In handleCollectors - targtargetItemsets", "targetItems", allocator.targetItems)
-
-	allocator.log.Info("Rashmi - In handleCollectors end")
 }
 
 // SetTargets accepts a list of targets that will be used to make
 // load balancing decisions. This method should be called when there are
 // new targets discovered or existing targets are shutdown.
 func (allocator *leastWeightedAllocator) SetTargets(targets map[string]*target.Item) {
-	allocator.log.Info("Rashmi - In SetTargets begin")
-	allocator.log.Info("Rashmi - In SetTargets targets", "targets", targets)
-
-
 	timer := prometheus.NewTimer(TimeToAssign.WithLabelValues("SetTargets", leastWeightedStrategyName))
 	defer timer.ObserveDuration()
 
@@ -237,14 +221,11 @@ func (allocator *leastWeightedAllocator) SetTargets(targets map[string]*target.I
 	if len(targetsDiff.Additions()) != 0 || len(targetsDiff.Removals()) != 0 {
 		allocator.handleTargets(targetsDiff)
 	}
-	allocator.log.Info("Rashmi - In SetTargets end")
 }
 
 // SetCollectors sets the set of collectors with key=collectorName, value=Collector object.
 // This method is called when Collectors are added or removed.
 func (allocator *leastWeightedAllocator) SetCollectors(collectors map[string]*Collector) {
-	allocator.log.Info("Rashmi - In SetCollectors begin")
-
 	timer := prometheus.NewTimer(TimeToAssign.WithLabelValues("SetCollectors", leastWeightedStrategyName))
 	defer timer.ObserveDuration()
 
@@ -262,7 +243,6 @@ func (allocator *leastWeightedAllocator) SetCollectors(collectors map[string]*Co
 	if len(collectorsDiff.Additions()) != 0 || len(collectorsDiff.Removals()) != 0 {
 		allocator.handleCollectors(collectorsDiff)
 	}
-	allocator.log.Info("Rashmi - In SetCollectors end")
 }
 
 func newLeastWeightedAllocator(log logr.Logger, opts ...AllocationOption) Allocator {
