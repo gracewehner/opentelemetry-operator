@@ -82,6 +82,7 @@ func (k *Client) Watch(ctx context.Context, labelMap map[string]string, fn func(
 	}
 
 	fn(collectorMap)
+
 	for {
 		if !k.restartWatch(ctx, opts, collectorMap, fn) {
 			return nil
@@ -103,11 +104,11 @@ func (k *Client) restartWatch(ctx context.Context, opts metav1.ListOptions, coll
 		k.log.Info("Collector pod watch event stopped " + msg)
 		return false
 	}
+
 	return true
 }
 
 func runWatch(ctx context.Context, k *Client, c <-chan watch.Event, collectorMap map[string]*allocation.Collector, fn func(collectors map[string]*allocation.Collector)) string {
-
 	for {
 		collectorsDiscovered.Set(float64(len(collectorMap)))
 		select {
