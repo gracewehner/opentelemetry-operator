@@ -107,10 +107,12 @@ func (c *consistentHashingAllocator) addCollectorTargetItemMapping(tg *target.It
 func (c *consistentHashingAllocator) addTargetToTargetItems(tg *target.Item) {
 	c.log.Info("Rashmi - In addTargetToTargetItems begin")
 	// Check if this is a reassignment, if so, decrement the previous collector's NumTargets
+	// if tg.CollectorName != "" {
 	if previousColName, ok := c.collectors[tg.CollectorName]; ok {
 		previousColName.NumTargets--
 		delete(c.targetItemsPerJobPerCollector[tg.CollectorName][tg.JobName], tg.Hash())
 		TargetsPerCollector.WithLabelValues(previousColName.String(), consistentHashingStrategyName).Set(float64(c.collectors[previousColName.String()].NumTargets))
+		// }
 	}
 	colOwner := c.consistentHasher.LocateKey([]byte(tg.Hash()))
 	tg.CollectorName = colOwner.String()
@@ -193,12 +195,55 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 	c.m.Lock()
 	defer c.m.Unlock()
 
+	// if len(c.collectors) == 0 {
+	// 	c.log.Info("No collector instances present, cannot set targets")
+	// 	return
+	// }
+
+	// Compute target diff if hasher already has a set of targetitems
+	if len(c.targetItems.length) > 0 {
+		targetsDiff := diff.Maps(c.targetItems, targets)
+	}
+
 	if len(c.collectors) == 0 {
-		c.log.Info("No collector instances present, cannot set targets")
+		c.log.Info("No collector instances present, saving targets to allocate to collector(s)")
+		// If there were no targets discovered previously, assign this as the new set of target items
+		if len(c.targetItems.length) == 0 {
+			c.log.Info("Not discovered any targets previously, saving targets found to the targetItems set")
+			for k, item := range targets {
+				c.targetItems[k] = item
+			}
+		} else {
+			// If there were previously discovered targets, add or remove accordingly
+			//targetsDiffEmptyCollectorSet := diff.Maps(c.targetItems, targets)
+
+			// Check for additions
+			if len(targetsDiff.Additions()) > 0 {
+				c.log.Info("New targets discovered, adding new targets to the targetItems set")
+				for k, item := range targetsDiff.Additions() {
+					// Do nothing if the item is already there
+					if _, ok := c.targetItems[k]; ok {
+						continue
+					} else {
+						// Add item to item pool
+						c.targetItems[k] = item
+					}
+				}
+			}
+
+			// Check for deletions
+			if len(targetsDiff.Removals()) > 0 {
+				c.log.Info("Targets removed, Removing targets from the targetItems set")
+				for k, item := range targetsDiff.Removals() {
+					// Delete item from target items
+					delete(c.targetItems, k)
+				}
+			}
+		}
 		return
 	}
-	// Check for target changes
-	targetsDiff := diff.Maps(c.targetItems, targets)
+	// If Check for target changes
+	//targetsDiff := diff.Maps(c.targetItems, targets)
 	// If there are any additions or removals
 	if len(targetsDiff.Additions()) != 0 || len(targetsDiff.Removals()) != 0 {
 		c.handleTargets(targetsDiff)
