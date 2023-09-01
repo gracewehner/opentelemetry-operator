@@ -106,12 +106,10 @@ func (c *consistentHashingAllocator) addCollectorTargetItemMapping(tg *target.It
 // item while it's being encoded by the server JSON handler.
 func (c *consistentHashingAllocator) addTargetToTargetItems(tg *target.Item) {
 	// Check if this is a reassignment, if so, decrement the previous collector's NumTargets
-	// if tg.CollectorName != "" {
 	if previousColName, ok := c.collectors[tg.CollectorName]; ok {
 		previousColName.NumTargets--
 		delete(c.targetItemsPerJobPerCollector[tg.CollectorName][tg.JobName], tg.Hash())
 		TargetsPerCollector.WithLabelValues(previousColName.String(), consistentHashingStrategyName).Set(float64(c.collectors[previousColName.String()].NumTargets))
-		// }
 	}
 	colOwner := c.consistentHasher.LocateKey([]byte(tg.Hash()))
 	tg.CollectorName = colOwner.String()
@@ -224,7 +222,7 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 		}
 		return
 	}
-	// If Check for target changes
+	// Check for target changes
 	targetsDiff := diff.Maps(c.targetItems, targets)
 	// If there are any additions or removals
 	if len(targetsDiff.Additions()) != 0 || len(targetsDiff.Removals()) != 0 {

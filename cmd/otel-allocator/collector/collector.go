@@ -64,8 +64,6 @@ func NewClient(logger logr.Logger, kubeConfig *rest.Config) (*Client, error) {
 }
 
 func (k *Client) Watch(ctx context.Context, labelMap map[string]string, fn func(collectors map[string]*allocation.Collector)) error {
-	k.log.Info("Rashmi in collectorWatch watch - begin")
-
 	collectorMap := map[string]*allocation.Collector{}
 
 	opts := metav1.ListOptions{
@@ -84,7 +82,6 @@ func (k *Client) Watch(ctx context.Context, labelMap map[string]string, fn func(
 	}
 
 	fn(collectorMap)
-	k.log.Info("Rashmi in collectorWatch watch - end")
 	for {
 		if !k.restartWatch(ctx, opts, collectorMap, fn) {
 			return nil
@@ -94,8 +91,6 @@ func (k *Client) Watch(ctx context.Context, labelMap map[string]string, fn func(
 
 func (k *Client) restartWatch(ctx context.Context, opts metav1.ListOptions, collectorMap map[string]*allocation.Collector, fn func(collectors map[string]*allocation.Collector)) bool {
 	// add timeout to the context before calling Watch
-	k.log.Info("Rashmi in collectorWatch restartWatch - begin")
-
 	ctx, cancel := context.WithTimeout(ctx, watcherTimeout)
 	defer cancel()
 	watcher, err := k.k8sClient.CoreV1().Pods(ns).Watch(ctx, opts)
@@ -108,12 +103,10 @@ func (k *Client) restartWatch(ctx context.Context, opts metav1.ListOptions, coll
 		k.log.Info("Collector pod watch event stopped " + msg)
 		return false
 	}
-	k.log.Info("Rashmi in collectorWatch restartWatch - end")
 	return true
 }
 
 func runWatch(ctx context.Context, k *Client, c <-chan watch.Event, collectorMap map[string]*allocation.Collector, fn func(collectors map[string]*allocation.Collector)) string {
-	k.log.Info("Rashmi in collectorWatch runWatch - begin")
 
 	for {
 		collectorsDiscovered.Set(float64(len(collectorMap)))
@@ -136,12 +129,10 @@ func runWatch(ctx context.Context, k *Client, c <-chan watch.Event, collectorMap
 
 			switch event.Type { //nolint:exhaustive
 			case watch.Added:
-				k.log.Info("Rashmi in collectorWatch runWatch case - watch.Added - end")
 				collectorMap[pod.Name] = allocation.NewCollector(pod.Name)
 			case watch.Deleted:
 				delete(collectorMap, pod.Name)
 			}
-			k.log.Info("Rashmi in collectorWatch runWatch - end")
 			fn(collectorMap)
 		}
 	}
