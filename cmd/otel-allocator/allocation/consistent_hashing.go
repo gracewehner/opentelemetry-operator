@@ -229,7 +229,7 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 			// Check for deletions
 			if len(targetsDiffEmptyCollectorSet.Removals()) > 0 {
 				c.log.Info("Targets removed, Removing targets from the targetItems set")
-				for k, item := range targetsDiffEmptyCollectorSet.Removals() {
+				for k, _ := range targetsDiffEmptyCollectorSet.Removals() {
 					// Delete item from target items
 					delete(c.targetItems, k)
 				}
