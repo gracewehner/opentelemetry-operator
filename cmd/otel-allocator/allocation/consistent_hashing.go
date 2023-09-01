@@ -199,11 +199,6 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 	// 	c.log.Info("No collector instances present, cannot set targets")
 	// 	return
 	// }
-	targetsDiff := new diff.Changes[new map[string]diff.Hasher]{}
-	// Compute target diff if hasher already has a set of targetitems
-	if len(c.targetItems) > 0 {
-		targetsDiff = diff.Maps(c.targetItems, targets)
-	}
 
 	if len(c.collectors) == 0 {
 		c.log.Info("No collector instances present, saving targets to allocate to collector(s)")
@@ -215,12 +210,12 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 			}
 		} else {
 			// If there were previously discovered targets, add or remove accordingly
-			//targetsDiffEmptyCollectorSet := diff.Maps(c.targetItems, targets)
+			targetsDiffEmptyCollectorSet := diff.Maps(c.targetItems, targets)
 
 			// Check for additions
-			if len(targetsDiff.Additions()) > 0 {
+			if len(targetsDiffEmptyCollectorSet.Additions()) > 0 {
 				c.log.Info("New targets discovered, adding new targets to the targetItems set")
-				for k, item := range targetsDiff.Additions() {
+				for k, item := range targetsDiffEmptyCollectorSet.Additions() {
 					// Do nothing if the item is already there
 					if _, ok := c.targetItems[k]; ok {
 						continue
@@ -232,9 +227,9 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 			}
 
 			// Check for deletions
-			if len(targetsDiff.Removals()) > 0 {
+			if len(targetsDiffEmptyCollectorSet.Removals()) > 0 {
 				c.log.Info("Targets removed, Removing targets from the targetItems set")
-				for k, item := range targetsDiff.Removals() {
+				for k, item := range targetsDiffEmptyCollectorSet.Removals() {
 					// Delete item from target items
 					delete(c.targetItems, k)
 				}
@@ -243,7 +238,7 @@ func (c *consistentHashingAllocator) SetTargets(targets map[string]*target.Item)
 		return
 	}
 	// If Check for target changes
-	//targetsDiff := diff.Maps(c.targetItems, targets)
+	targetsDiff := diff.Maps(c.targetItems, targets)
 	// If there are any additions or removals
 	if len(targetsDiff.Additions()) != 0 || len(targetsDiff.Removals()) != 0 {
 		c.handleTargets(targetsDiff)
